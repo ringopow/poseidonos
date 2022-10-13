@@ -220,6 +220,7 @@ VersionedSegmentCtx::GetNumLogGroups(void)
 void
 VersionedSegmentCtx::EraseSegmentInfo(int logGroupId, SegmentId targetSegmentId)
 {
+    bool foundedTargetSegment = false;
     shared_ptr<VersionedSegmentInfo> targetSegInfo = segmentInfoDiffs[logGroupId];
     tbb::concurrent_unordered_map<SegmentId, int> changedValidBlkCount = targetSegInfo->GetChangedValidBlockCount();
     for (auto it = changedValidBlkCount.begin(); it != changedValidBlkCount.end(); it++)
@@ -228,6 +229,7 @@ VersionedSegmentCtx::EraseSegmentInfo(int logGroupId, SegmentId targetSegmentId)
         if (segmentId == targetSegmentId)
         {
             changedValidBlkCount.unsafe_erase(it);
+            foundedTargetSegment = true;
             break;
         }
     }
@@ -239,8 +241,21 @@ VersionedSegmentCtx::EraseSegmentInfo(int logGroupId, SegmentId targetSegmentId)
         if (segmentId == targetSegmentId)
         {
             changedOccupiedCount.unsafe_erase(it);
+            foundedTargetSegment = true;
             break;
         }
+    }
+
+    if (true == foundedTargetSegment)
+    {
+        segmentInfos[targetSegmentId].MoveToFreeState();
+    }
+    else
+    {
+        POS_TRACE_ERROR(EID(JOURNAL_INVALID),
+                "Failed to find target segment id in versioned segment infos, logGroupId {}, targetSegmentId {}",
+                logGroupId, targetSegmentId);
+        assert(false);
     }
 }
 
