@@ -155,7 +155,7 @@ VersionedSegmentCtx::_UpdateSegmentContext(int logGroupId)
 
         segmentInfos[segmentId].SetValidBlockCount(result);
 
-        if ((0 > (int)getValidCount) || (131072 < result) )
+        if ((0 > (int)getValidCount) || (0 > (int)result))// || (131072 < result) )
         {
             POS_TRACE_ERROR(EID(JOURNAL_INVALID),
                 "After update underflow occurred, logGroupId {}, segmentInfos[{}].GetValidBlockCount() = {}, validBlockCountDiff {}, result {}",
