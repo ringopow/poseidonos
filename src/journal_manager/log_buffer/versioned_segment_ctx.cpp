@@ -248,7 +248,7 @@ VersionedSegmentCtx::ResetInfosAfterSegmentFreed(SegmentId targetSegmentId)
         segmentInfoDiffs[groupId]->ResetValidBlockCount(targetSegmentId);
     }
 
-    segmentInfos[targetSegmentId].SetValidBlockCount(0);
+    //segmentInfos[targetSegmentId].SetValidBlockCount(0);
     segmentInfos[targetSegmentId].SetOccupiedStripeCount(0);
     segmentInfos[targetSegmentId].SetState(SegmentState::FREE);
 }
